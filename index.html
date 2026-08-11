@@ -1887,7 +1887,8 @@ async function carregarDoSupabase(){
       lancs = dataL.map(l=>({
         id: l.id_local || Math.round(Math.random()*10000),
         desc: l.descricao, val: parseFloat(l.valor),
-        cat: l.categoria, tipo: l.tipo, mes: l.mes, ano: l.ano, data: l.data,
+        cat: l.categoria, tipo: l.tipo,
+        mes: parseInt(l.mes), ano: parseInt(l.ano), data: l.data,
         pagId: l.pag_id||null
       }));
       nid = Math.max(...lancs.map(l=>typeof l.id==='number'?l.id:0), 0) + 1;
@@ -1913,7 +1914,7 @@ async function salvarNoSupabase(){
     if(!user) return;
     const uid = user.id;
 
-    // ── LANÇAMENTOS: upsert seguro (nunca apaga antes de confirmar insert) ──
+    // ── LANÇAMENTOS: delete + insert ──
     if(lancs.length > 0){
       const rows = lancs.map(l=>({
         user_id: uid,
@@ -1921,10 +1922,6 @@ async function salvarNoSupabase(){
         descricao: l.desc, valor: l.val, categoria: l.cat,
         tipo: l.tipo, mes: l.mes, ano: l.ano, data: l.data||null, pag_id: l.pagId||null
       }));
-      // Testa insert antes de apagar
-      const {error: errTest} = await supa.from('lancamentos').insert(rows.slice(0,1));
-      if(errTest){ console.error('Erro ao salvar lançamentos:', errTest); throw errTest; }
-      // Insert confirmado — agora apaga os antigos e insere todos
       await supa.from('lancamentos').delete().eq('user_id', uid);
       const {error} = await supa.from('lancamentos').insert(rows);
       if(error){ console.error('Erro ao salvar lançamentos:', error); throw error; }
