@@ -1912,8 +1912,8 @@ async function salvarNoSupabase(){
     const { data: { user } } = await supa.auth.getUser();
     if(!user) return;
     const uid = user.id;
-    // Salvar lançamentos
-    await supa.from('lancamentos').delete().eq('user_id', uid);
+
+    // ── LANÇAMENTOS: upsert seguro (nunca apaga antes de confirmar insert) ──
     if(lancs.length > 0){
       const rows = lancs.map(l=>({
         user_id: uid,
@@ -1921,20 +1921,34 @@ async function salvarNoSupabase(){
         descricao: l.desc, valor: l.val, categoria: l.cat,
         tipo: l.tipo, mes: l.mes, ano: l.ano, data: l.data||null, pag_id: l.pagId||null
       }));
+      // Testa insert antes de apagar
+      const {error: errTest} = await supa.from('lancamentos').insert(rows.slice(0,1));
+      if(errTest){ console.error('Erro ao salvar lançamentos:', errTest); throw errTest; }
+      // Insert confirmado — agora apaga os antigos e insere todos
+      await supa.from('lancamentos').delete().eq('user_id', uid);
       const {error} = await supa.from('lancamentos').insert(rows);
       if(error){ console.error('Erro ao salvar lançamentos:', error); throw error; }
     }
-    // Salvar configurações
-    await supa.from('configuracoes').delete().eq('user_id', uid);
-    const {error: errCfg} = await supa.from('configuracoes').insert({
-      user_id: uid, receitas: recs, limites: lims, metas: metas, fixos: {lista: fixos, meiosPag: meiosPag}
-    });
-    if(errCfg){ console.error('Erro ao salvar configs:', errCfg); throw errCfg; }
+
+    // ── CONFIGURAÇÕES: upsert seguro ──
+    const cfgPayload = {
+      user_id: uid, receitas: recs, limites: lims, metas: metas,
+      fixos: {lista: fixos, meiosPag: meiosPag}
+    };
+    // Tenta insert — se já existe, faz update
+    const {error: errCfg} = await supa.from('configuracoes').upsert(cfgPayload, {onConflict: 'user_id'});
+    if(errCfg){
+      // upsert falhou — tenta delete+insert clássico
+      await supa.from('configuracoes').delete().eq('user_id', uid);
+      const {error: errCfg2} = await supa.from('configuracoes').insert(cfgPayload);
+      if(errCfg2){ console.error('Erro ao salvar configs:', errCfg2); throw errCfg2; }
+    }
+
     atualizarStatus('Sincronizado ✓', '#6c4fd6');
     setTimeout(()=>atualizarStatus('Sincronizado com a nuvem ☁'), 2000);
   } catch(e){
     console.warn('Erro ao salvar no Supabase:', e);
-    atualizarStatus('Erro ao sincronizar', '#e34948');
+    atualizarStatus('Erro ao sincronizar ⚠', '#e34948');
   }
 }
 
