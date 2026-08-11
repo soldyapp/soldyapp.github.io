@@ -1899,8 +1899,7 @@ async function carregarDoSupabase(){
       if(cfg.receitas)   recs     = cfg.receitas;
       if(cfg.limites)    lims     = cfg.limites;
       if(cfg.metas)      metas    = cfg.metas;
-      if(cfg.fixos)      fixos    = cfg.fixos;
-      if(cfg.meiosPag)   meiosPag = cfg.meiosPag;
+      if(cfg.fixos){ if(Array.isArray(cfg.fixos)){ fixos=cfg.fixos; } else { fixos=cfg.fixos.lista||[]; if(cfg.fixos.meiosPag) meiosPag=cfg.fixos.meiosPag; } }
     }
     return true;
   } catch(e){ console.warn('Erro ao carregar do Supabase:', e); return false; }
@@ -1920,7 +1919,7 @@ async function salvarNoSupabase(){
         user_id: uid,
         id_local: typeof l.id==='number' ? l.id : null,
         descricao: l.desc, valor: l.val, categoria: l.cat,
-        tipo: l.tipo, mes: l.mes, ano: l.ano, data: l.data||null
+        tipo: l.tipo, mes: l.mes, ano: l.ano, data: l.data||null, pag_id: l.pagId||null
       }));
       const {error} = await supa.from('lancamentos').insert(rows);
       if(error){ console.error('Erro ao salvar lançamentos:', error); throw error; }
@@ -1928,7 +1927,7 @@ async function salvarNoSupabase(){
     // Salvar configurações
     await supa.from('configuracoes').delete().eq('user_id', uid);
     const {error: errCfg} = await supa.from('configuracoes').insert({
-      user_id: uid, receitas: recs, limites: lims, metas: metas, fixos: fixos, meiosPag: meiosPag
+      user_id: uid, receitas: recs, limites: lims, metas: metas, fixos: {lista: fixos, meiosPag: meiosPag}
     });
     if(errCfg){ console.error('Erro ao salvar configs:', errCfg); throw errCfg; }
     atualizarStatus('Sincronizado ✓', '#6c4fd6');
