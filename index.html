@@ -78,7 +78,6 @@
   .ni[data-sec="metas"]:hover, .ni[data-sec="metas"].on { color: #fcd34d; background: rgba(252,211,77,0.12); border-left-color: #fcd34d; }
   .ni[data-sec="rel"]:hover, .ni[data-sec="rel"].on { color: #c084fc; background: rgba(192,132,252,0.12); border-left-color: #c084fc; }
   .ni[data-sec="hist"]:hover, .ni[data-sec="hist"].on { color: #94a3b8; background: rgba(148,163,184,0.12); border-left-color: #94a3b8; }
-  .ni[data-sec="carteiras"]:hover, .ni[data-sec="carteiras"].on { color: #38bdf8; background: rgba(56,189,248,0.12); border-left-color: #38bdf8; }
 
   /* ITENS DE AÇÃO NO FUNDO */
   .ni-action { display: flex; align-items: center; gap: 10px; padding: 9px 14px; font-size: 11px; color: rgba(255,255,255,0.35); cursor: pointer; transition: all .15s; }
@@ -181,18 +180,6 @@
   /* CORES */
   .pos { color: var(--green); }
   .neg { color: var(--red); }
-
-  /* MEIOS DE PAGAMENTO */
-  .pgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 8px; margin-bottom: 14px; }
-  .pcard { background: var(--surface-2); border-radius: 9px; padding: 11px 12px; border: 1.5px solid var(--border); cursor: pointer; transition: all .15s; position: relative; }
-  .pcard:hover { border-color: var(--purple); }
-  .pcard.sel { border-color: var(--purple); background: var(--green-light); }
-  .pcard-ic { font-size: 20px; margin-bottom: 5px; }
-  .pcard-nome { font-size: 12px; font-weight: 500; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .pcard-tipo { font-size: 10px; color: var(--text-muted); margin-top: 2px; }
-  .pcard-dot { width: 8px; height: 8px; border-radius: 50%; position: absolute; top: 10px; right: 10px; }
-  .pmgr-item { display: flex; align-items: center; gap: 10px; padding: 11px 0; border-bottom: 0.5px solid var(--border); }
-  .pmgr-item:last-child { border-bottom: none; }
 
   /* MOBILE */
   @media (max-width: 768px) {
@@ -318,7 +305,6 @@
   <div class="ni" data-sec="metas" onclick="nav('metas',this)"><i class="ti ti-trophy"></i> Metas</div>
   <div class="ni" data-sec="rel" onclick="nav('rel',this)"><i class="ti ti-report"></i> Relatório</div>
   <div class="ni" data-sec="hist" onclick="nav('hist',this)"><i class="ti ti-list"></i> Histórico</div>
-  <div class="ni" data-sec="carteiras" onclick="nav('carteiras',this)"><i class="ti ti-wallet"></i> Carteiras</div>
   <div class="sb-sep" style="margin-top:8px"></div>
   <div class="sb-sep" style="margin-top:8px"></div>
   <div class="ni" onclick="exportarExcel()" style="color:rgba(255,255,255,0.35);font-size:11px"><i class="ti ti-file-spreadsheet" style="font-size:14px"></i> Exportar Excel</div>
@@ -375,10 +361,6 @@
       <div id="catSec">
         <label class="flbl" style="display:block;margin-bottom:6px">Categoria</label>
         <div class="cgrid" id="chips"></div>
-      </div>
-      <div id="pagSec" style="margin-top:12px">
-        <label class="flbl" style="display:block;margin-bottom:8px">Como foi pago? <span style="font-size:10px;color:var(--text-muted);font-weight:400;text-transform:none;letter-spacing:0">(opcional)</span></label>
-        <div class="pgrid" id="pgChips"></div>
       </div>
       <div class="btn-row">
         <button class="bgr" onclick="addLanc()"><i class="ti ti-check"></i> Salvar</button>
@@ -559,50 +541,6 @@
     </div>
   </div>
 
-  <!-- CARTEIRAS -->
-  <div class="sec" id="s-carteiras">
-    <div class="fcard">
-      <div class="ftitle"><i class="ti ti-wallet" style="color:#38bdf8"></i>Meios de Pagamento</div>
-      <p style="font-size:12px;color:var(--text-muted);margin-bottom:16px">Cadastre os cartões e formas de pagamento da sua família. Eles aparecerão ao lançar uma despesa.</p>
-
-      <!-- Formulário novo meio -->
-      <div style="background:var(--surface-2);border-radius:8px;padding:14px;margin-bottom:18px;border:0.5px solid var(--border)">
-        <div style="font-size:12px;font-weight:500;color:var(--text-primary);margin-bottom:12px"><i class="ti ti-plus" style="margin-right:6px;color:#38bdf8"></i>Novo meio de pagamento</div>
-        <div style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:9px;margin-bottom:9px">
-          <div class="fgrp"><label class="flbl">Nome / Apelido</label><input class="fi" id="pgNome" placeholder='Ex: Nubank Marina, Caixa João'></div>
-          <div class="fgrp"><label class="flbl">Tipo</label>
-            <select class="fi" id="pgTipo" onchange="renderPgIc()">
-              <option value="credito">Crédito 💳</option>
-              <option value="debito">Débito 🏦</option>
-              <option value="dinheiro">Dinheiro 💵</option>
-              <option value="pix">Pix ⚡</option>
-            </select>
-          </div>
-          <div class="fgrp"><label class="flbl">Titular</label><input class="fi" id="pgTitular" placeholder="Ex: Marina, João, Filho"></div>
-          <div class="fgrp"><label class="flbl">Cor</label>
-            <input type="color" id="pgCor" value="#6c4fd6" style="width:100%;height:37px;border-radius:var(--radius);border:0.5px solid var(--border-strong);background:var(--surface-2);cursor:pointer;padding:2px 4px">
-          </div>
-        </div>
-        <div class="btn-row">
-          <button class="bgr" onclick="addMeioPag()" style="background:#38bdf8;color:#0f0a2e"><i class="ti ti-check"></i> Adicionar</button>
-          <span class="tst" id="tPg"></span>
-        </div>
-      </div>
-
-      <!-- Resumo por tipo -->
-      <div id="pgResumo" style="display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap"></div>
-
-      <!-- Lista -->
-      <div id="pgLista"></div>
-    </div>
-
-    <!-- Gastos por meio de pagamento -->
-    <div class="card" style="margin-top:14px">
-      <div class="ct"><i class="ti ti-chart-bar" style="color:#38bdf8;margin-right:6px"></i>Gastos por meio — <span id="pgMesLbl"></span></div>
-      <div id="pgGastos"></div>
-    </div>
-  </div>
-
   <!-- HISTÓRICO -->
   <div class="sec" id="s-hist">
     <div class="fcard" style="padding:12px 14px;margin-bottom:14px">
@@ -617,7 +555,6 @@
             <option>Fixo</option>
           </select>
         </div>
-        <div class="fgrp"><label class="flbl">Pagamento</label><select class="fi" id="fPF" style="width:160px" onchange="renderHist()"><option value="">Todos</option></select></div>
         <button onclick="limparFiltrosHist()" class="bgh" style="margin-top:14px"><i class="ti ti-x"></i> Limpar</button>
       </div>
     </div>
@@ -807,7 +744,7 @@ function nav(id,el){
   render(id);
 }
 function render(id){
-  ({dash:renderDash,lancar:renderLancar,cat:renderCat,evolucao:renderEvolucao,rec:renderRec,lim:renderLim,rel:renderRel,hist:renderHist,metas:renderMetasEditor,fixos:renderFixos,carteiras:renderCarteiras})[id]?.();
+  ({dash:renderDash,lancar:renderLancar,cat:renderCat,evolucao:renderEvolucao,rec:renderRec,lim:renderLim,rel:renderRel,hist:renderHist,metas:renderMetasEditor,fixos:renderFixos})[id]?.();
 }
 
 function renderMes(){
@@ -865,21 +802,18 @@ function renderDash(){
   mkC('lineC',{type:'line',data:{labels:days.map(d=>d+'/'+String(cM+1).padStart(2,'0')),datasets:[{data:days.map(d=>dd[d]),borderColor:GOLD,backgroundColor:'rgba(200,168,75,0.08)',borderWidth:2,tension:0.4,pointRadius:3,pointBackgroundColor:GOLD,fill:true}]},options:{...gOpts,scales:{x:xAx,y:yAx(v=>fmt(v))}}});
 }
 
-const COLS=[{l:'Data',w:'80px'},{l:'Descrição'},{l:'Categoria',w:'110px'},{l:'Tipo',w:'65px'},{l:'Pagamento',w:'110px'},{l:'Valor',w:'100px'},{l:'',w:'32px'}];
+const COLS=[{l:'Data',w:'80px'},{l:'Descrição'},{l:'Categoria',w:'110px'},{l:'Tipo',w:'65px'},{l:'Valor',w:'100px'},{l:'',w:'32px'}];
 function txRows(list){
-  if(!list.length)return'<tr><td colspan="7" style="color:var(--text-muted);padding:14px;font-size:13px">Nenhum lançamento encontrado.</td></tr>';
+  if(!list.length)return'<tr><td colspan="6" style="color:var(--text-muted);padding:14px;font-size:13px">Nenhum lançamento encontrado.</td></tr>';
   return`<tr>${COLS.map(c=>`<th style="${c.w?'width:'+c.w:''}">${c.l}</th>`).join('')}</tr>`+
   list.map(l=>{
     const cl=CATS[l.cat]?.cl||'#888';
     const ds=l.data?l.data.split('-').reverse().slice(0,2).join('/'):(MS[l.mes]+'/'+l.ano);
-    const pg=l.pagId?getMeioPag(l.pagId):null;
-    const pgBdg=pg?`<span style="font-size:10px;background:${pg.cor}22;color:${pg.cor};border-radius:4px;padding:1px 6px;white-space:nowrap">${PG_IC[pg.tipo]||''} ${pg.nome}</span>`:`<span style="font-size:10px;color:var(--text-muted)">—</span>`;
     return`<tr>
       <td style="color:var(--text-muted)">${ds}</td>
       <td>${l.desc}</td>
       <td><span class="bdg" style="background:${cl}22;color:${cl}">${CATS[l.cat]?.ic||''} ${l.cat}</span></td>
       <td style="font-size:11px;color:${l.tipo==='Receita'?'var(--green)':'var(--red)'}">${l.tipo}</td>
-      <td>${pgBdg}</td>
       <td style="text-align:right;font-weight:500" class="${l.tipo==='Despesa'?'neg':'pos'}">${l.tipo==='Despesa'?'−\u00a0':'+\u00a0'}${fmtD(l.val)}</td>
       <td><button onclick="delLanc(${l.id})" style="background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:15px;padding:2px" title="Remover"><i class="ti ti-trash"></i></button></td>
     </tr>`;
@@ -892,11 +826,10 @@ function renderLancar(){
   if(!document.getElementById('fData').value)
     document.getElementById('fData').value=`${cA}-${String(cM+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
   toggleCat();
-  renderPgChips();
   document.getElementById('txMes').innerHTML=txRows([...getLancs(cM,cA)].sort((a,b)=>b.id-a.id));
 }
 function pickC(c){selC=c;document.querySelectorAll('#chips .chip').forEach(el=>el.classList.toggle('on',el.textContent.trim().includes(c)));}
-function toggleCat(){const r=document.getElementById('fTipo').value==='Receita';document.getElementById('catSec').style.display=r?'none':'block';const ps=document.getElementById('pagSec');if(ps)ps.style.display=r?'none':'block';}
+function toggleCat(){document.getElementById('catSec').style.display=document.getElementById('fTipo').value==='Receita'?'none':'block';}
 function addLanc(){
   const desc=document.getElementById('fDesc').value.trim();
   const val=parseFloat(document.getElementById('fValor').value);
@@ -905,7 +838,7 @@ function addLanc(){
   if(!desc||!val||val<=0||!ds){toast('tL','Preencha todos os campos.',true);return;}
   const [a,m]=ds.split('-').map(Number);
   if(tipo==='Receita'){ const cur=recs[m-1]; const curTotal=typeof cur==='object'?cur.total||0:cur||0; if(typeof cur==='object'){recs[m-1]={...cur,total:curTotal+val};}else{recs[m-1]={total:curTotal+val,fontes:[{ic:'🎁',nome:'Outros',val:curTotal+val}]};} }
-  lancs.push({id:nid++,desc,val,cat:tipo==='Receita'?'Outros':selC,tipo,mes:m-1,ano:a,data:ds,pagId:tipo==='Despesa'?selPg:null});
+  lancs.push({id:nid++,desc,val,cat:tipo==='Receita'?'Outros':selC,tipo,mes:m-1,ano:a,data:ds});
   clearF();
   toast('tL','Salvando...');
   salvarNoSupabase().then(()=>{
@@ -917,12 +850,7 @@ function addLanc(){
   });
   salvar();
 }
-function clearF(){document.getElementById('fDesc').value='';document.getElementById('fValor').value='';document.getElementById('fTipo').value='Despesa';selPg=null;toggleCat();}
-function togglePagSec(){
-  const isDespesa = document.getElementById('fTipo').value==='Despesa';
-  const el = document.getElementById('pagSec');
-  if(el) el.style.display = isDespesa?'block':'none';
-}
+function clearF(){document.getElementById('fDesc').value='';document.getElementById('fValor').value='';document.getElementById('fTipo').value='Despesa';toggleCat();}
 function delLanc(id){
   lancs=lancs.filter(l=>l.id!==id);
   salvarNoSupabase();
@@ -1173,7 +1101,6 @@ function limparFiltrosHist(){
   document.getElementById('fMF').value='';
   document.getElementById('fCF').value='';
   document.getElementById('fTF').value='';
-  const fp=document.getElementById('fPF');if(fp)fp.value='';
   renderHist();
 }
 
@@ -1184,15 +1111,9 @@ function renderHist(){
     const fc=document.getElementById('fCF');
     CK.forEach(c=>{const o=document.createElement('option');o.value=c;o.textContent=c;fc.appendChild(o);});
   }
-  // Popula filtro de meios de pagamento
-  const fpEl=document.getElementById('fPF');
-  if(fpEl && fpEl.options.length===1){
-    meiosPag.forEach(p=>{const o=document.createElement('option');o.value=p.id;o.textContent=PG_IC[p.tipo]+' '+p.nome;fpEl.appendChild(o);});
-  }
   const vm=document.getElementById('fMF').value;
   const vc=document.getElementById('fCF').value;
   const vt=document.getElementById('fTF').value;
-  const vp=fpEl?fpEl.value:'';
 
   // Monta lista normal
   let list=[...lancs];
@@ -1225,8 +1146,6 @@ function renderHist(){
   // Filtra por tipo
   if(vt==='Fixo') combined = fixosList;
   else if(vt) combined = list.filter(l=>l.tipo===vt);
-  // Filtra por meio de pagamento
-  if(vp) combined = combined.filter(l=>l.pagId==vp);
 
   combined.sort((a,b)=>{
     if(a.data && b.data) return b.data.localeCompare(a.data);
@@ -1297,22 +1216,19 @@ function renderHist(){
 }
 
 function txRowsHist(list){
-  if(!list.length) return '<tr><td colspan="7" style="color:var(--text-muted);padding:14px;font-size:13px">Nenhum lançamento encontrado.</td></tr>';
-  return`<tr><th style="width:80px">Data</th><th>Descrição</th><th style="width:110px">Categoria</th><th style="width:65px">Tipo</th><th style="width:110px">Pagamento</th><th style="width:100px;text-align:right">Valor</th><th style="width:32px"></th></tr>`+
+  if(!list.length) return '<tr><td colspan="6" style="color:var(--text-muted);padding:14px;font-size:13px">Nenhum lançamento encontrado.</td></tr>';
+  return`<tr><th style="width:80px">Data</th><th>Descrição</th><th style="width:110px">Categoria</th><th style="width:65px">Tipo</th><th style="width:100px;text-align:right">Valor</th><th style="width:32px"></th></tr>`+
   list.map(l=>{
     const cl=CATS[l.cat]?.cl||'#888';
     const ds=l.data?l.data.split('-').reverse().slice(0,2).join('/'):(MS[l.mes]+'/'+l.ano);
     const isFixo = l.isFixo || l.tipo==='Fixo';
     const tipoColor = l.tipo==='Receita'?'var(--green)':isFixo?'#34d399':'var(--red)';
     const tipoLabel = isFixo?'🔄 Fixo':l.tipo;
-    const pg=l.pagId?getMeioPag(l.pagId):null;
-    const pgBdg=pg?`<span style="font-size:10px;background:${pg.cor}22;color:${pg.cor};border-radius:4px;padding:1px 6px;white-space:nowrap">${PG_IC[pg.tipo]||''} ${pg.nome}</span>`:`<span style="font-size:10px;color:var(--text-muted)">—</span>`;
     return`<tr>
       <td style="color:var(--text-muted)">${ds}</td>
       <td>${l.desc}${isFixo?'<span style="font-size:9px;color:#34d399;margin-left:6px;vertical-align:middle">FIXO</span>':''}</td>
       <td><span class="bdg" style="background:${cl}22;color:${cl}">${CATS[l.cat]?.ic||''} ${l.cat}</span></td>
       <td style="font-size:10px;color:${tipoColor}">${tipoLabel}</td>
-      <td>${pgBdg}</td>
       <td style="text-align:right;font-weight:500" class="${l.tipo==='Despesa'||isFixo?'neg':'pos'}">${l.tipo==='Despesa'||isFixo?'−\u00a0':'+\u00a0'}${fmtD(l.val)}</td>
       <td>${!isFixo?`<button onclick="delLanc(${l.id})" style="background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:13px;padding:2px"><i class="ti ti-trash"></i></button>`:
         l.pago===false?'<span style="font-size:11px;color:var(--amber)" title="Gasto fixo pendente"><i class="ti ti-clock"></i></span>':
@@ -1455,7 +1371,6 @@ function salvar(){
     localStorage.setItem('soldy_nid',   nid);
     localStorage.setItem('soldy_metas', JSON.stringify(metas));
     localStorage.setItem('soldy_fixos', JSON.stringify(fixos));
-    localStorage.setItem('soldy_meios', JSON.stringify(meiosPag));
   } catch(e){ console.warn('Erro ao salvar:', e); }
 }
 
@@ -1467,14 +1382,12 @@ function carregar(){
     const n=localStorage.getItem('soldy_nid');
     const m=localStorage.getItem('soldy_metas');
     const fx=localStorage.getItem('soldy_fixos');
-    const mg=localStorage.getItem('soldy_meios');
-    if(l)  lancs     = JSON.parse(l);
-    if(r)  recs      = JSON.parse(r);
-    if(li) lims      = JSON.parse(li);
-    if(n)  nid       = parseInt(n);
-    if(m)  metas     = JSON.parse(m);
-    if(fx) fixos     = JSON.parse(fx);
-    if(mg) meiosPag  = JSON.parse(mg);
+    if(l)  lancs  = JSON.parse(l);
+    if(r)  recs   = JSON.parse(r);
+    if(li) lims   = JSON.parse(li);
+    if(n)  nid    = parseInt(n);
+    if(m)  metas  = JSON.parse(m);
+    if(fx) fixos  = JSON.parse(fx);
     return !!(l||r||li);
   } catch(e){ console.warn('Erro ao carregar:', e); return false; }
 }
@@ -1514,165 +1427,6 @@ async function sair(){
   if(supa) await supa.auth.signOut();
   localStorage.removeItem('soldy_session');
   location.reload();
-}
-
-// ── MEIOS DE PAGAMENTO ────────────────────────────────────────
-let meiosPag = [
-  {id:1, nome:'Dinheiro (Marido)',  tipo:'dinheiro', titular:'Marido',  cor:'#1baf7a'},
-  {id:2, nome:'Dinheiro (Esposa)',  tipo:'dinheiro', titular:'Esposa',  cor:'#e87ba4'},
-  {id:3, nome:'Débito (Marido)',    tipo:'debito',   titular:'Marido',  cor:'#2a78d6'},
-  {id:4, nome:'Débito (Esposa)',    tipo:'debito',   titular:'Esposa',  cor:'#a855f7'},
-  {id:5, nome:'Crédito Marido 1',  tipo:'credito',  titular:'Marido',  cor:'#eda100'},
-  {id:6, nome:'Crédito Esposa 1',  tipo:'credito',  titular:'Esposa',  cor:'#e34948'},
-  {id:7, nome:'Crédito Família',   tipo:'credito',  titular:'Família', cor:'#6c4fd6'},
-];
-let pgNextId = 20;
-let selPg = null; // id do meio selecionado no formulário de lançamento
-
-const PG_IC = { credito:'💳', debito:'🏦', dinheiro:'💵', pix:'⚡' };
-const PG_LABEL = { credito:'Crédito', debito:'Débito', dinheiro:'Dinheiro', pix:'Pix' };
-
-function renderPgIc(){ /* atualiza preview se necessário */ }
-
-function getMeioPag(id){ return meiosPag.find(p=>p.id===id)||null; }
-
-// Renderiza chips de pagamento no formulário de lançamento
-function renderPgChips(){
-  const el = document.getElementById('pgChips');
-  if(!el) return;
-  if(!meiosPag.length){
-    el.innerHTML='<div style="font-size:12px;color:var(--text-muted)">Nenhum meio cadastrado. Acesse <strong>Carteiras</strong> para adicionar.</div>';
-    return;
-  }
-  // Chip "Nenhum"
-  const nenhum = `<div class="pcard${selPg===null?' sel':''}" onclick="pickPg(null)" title="Não informar">
-    <div class="pcard-ic">—</div>
-    <div class="pcard-nome">Não informar</div>
-    <div class="pcard-tipo" style="color:var(--text-muted)">Pular</div>
-  </div>`;
-  el.innerHTML = nenhum + meiosPag.map(p=>`
-    <div class="pcard${selPg===p.id?' sel':''}" onclick="pickPg(${p.id})" title="${p.titular}">
-      <div class="pcard-dot" style="background:${p.cor}"></div>
-      <div class="pcard-ic">${PG_IC[p.tipo]||'💳'}</div>
-      <div class="pcard-nome">${p.nome}</div>
-      <div class="pcard-tipo">${PG_LABEL[p.tipo]||p.tipo} · ${p.titular}</div>
-    </div>`).join('');
-}
-
-function pickPg(id){
-  selPg = id;
-  renderPgChips();
-}
-
-// Renderiza a seção de gestão de carteiras
-function renderCarteiras(){
-  document.getElementById('pgMesLbl').textContent = MS[cM]+' '+cA;
-
-  // Resumo por tipo
-  const contagem = {};
-  meiosPag.forEach(p=>{ contagem[p.tipo]=(contagem[p.tipo]||0)+1; });
-  document.getElementById('pgResumo').innerHTML = Object.entries(PG_LABEL).map(([k,v])=>{
-    const n = contagem[k]||0;
-    return `<div style="flex:1;min-width:100px;background:var(--surface-2);border-radius:8px;padding:9px 12px;border:0.5px solid var(--border)">
-      <div style="font-size:10px;color:var(--text-muted);margin-bottom:3px">${PG_IC[k]} ${v}</div>
-      <div style="font-size:20px;font-weight:500">${n}</div>
-    </div>`;
-  }).join('');
-
-  // Lista de meios
-  const lista = document.getElementById('pgLista');
-  if(!meiosPag.length){
-    lista.innerHTML='<div style="font-size:13px;color:var(--text-muted);padding:20px 0;text-align:center">Nenhum meio cadastrado ainda. Adicione acima!</div>';
-  } else {
-    // Agrupados por titular
-    const titulares = [...new Set(meiosPag.map(p=>p.titular))];
-    lista.innerHTML = titulares.map(t=>{
-      const grupo = meiosPag.filter(p=>p.titular===t);
-      return `<div style="margin-bottom:16px">
-        <div style="font-size:10px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;display:flex;align-items:center;gap:6px">
-          <span style="width:1px;height:12px;background:var(--border)"></span>${t}
-        </div>
-        ${grupo.map(p=>`
-          <div class="pmgr-item">
-            <div style="width:38px;height:38px;border-radius:10px;background:${p.cor}22;border:1.5px solid ${p.cor};display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">${PG_IC[p.tipo]||'💳'}</div>
-            <div style="flex:1">
-              <div style="font-size:13px;font-weight:500;color:var(--text-primary)">${p.nome}</div>
-              <div style="font-size:11px;color:var(--text-muted);margin-top:1px">
-                <span style="background:${p.cor}22;color:${p.cor};border-radius:4px;padding:1px 7px;font-size:10px">${PG_LABEL[p.tipo]||p.tipo}</span>
-              </div>
-            </div>
-            <button onclick="removeMeioPag(${p.id})" style="background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:14px;padding:4px" title="Remover"><i class="ti ti-trash"></i></button>
-          </div>`).join('')}
-      </div>`;
-    }).join('');
-  }
-
-  // Gastos por meio no mês atual
-  const ls = getLancs(cM, cA).filter(l=>l.tipo==='Despesa'&&l.pagId);
-  const totPorMeio = {};
-  ls.forEach(l=>{ totPorMeio[l.pagId]=(totPorMeio[l.pagId]||0)+l.val; });
-  const totalPg = Object.values(totPorMeio).reduce((a,b)=>a+b,0)||1;
-  const pgGEl = document.getElementById('pgGastos');
-  const usados = meiosPag.filter(p=>totPorMeio[p.id]);
-  const semInfo = getLancs(cM,cA).filter(l=>l.tipo==='Despesa'&&!l.pagId).reduce((a,l)=>a+l.val,0);
-  if(!usados.length && !semInfo){
-    pgGEl.innerHTML='<div style="font-size:12px;color:var(--text-muted);padding:10px 0">Nenhuma despesa com meio de pagamento registrado este mês.</div>';
-  } else {
-    pgGEl.innerHTML = usados.map(p=>{
-      const v=totPorMeio[p.id];
-      const pct=Math.round(v/totalPg*100);
-      return`<div style="margin-bottom:10px">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
-          <div style="display:flex;align-items:center;gap:7px;font-size:12px">
-            <span style="font-size:15px">${PG_IC[p.tipo]||'💳'}</span>
-            <span style="color:var(--text-primary)">${p.nome}</span>
-            <span style="font-size:10px;background:${p.cor}22;color:${p.cor};border-radius:4px;padding:1px 6px">${p.titular}</span>
-          </div>
-          <span style="font-size:13px;font-weight:500">${fmt(v)}</span>
-        </div>
-        <div style="height:5px;background:var(--surface-0);border-radius:3px;overflow:hidden">
-          <div style="height:5px;width:${pct}%;background:${p.cor};border-radius:3px;transition:width .5s"></div>
-        </div>
-      </div>`;
-    }).join('') + (semInfo>0?`<div style="margin-top:10px;padding-top:10px;border-top:0.5px solid var(--border);font-size:12px;color:var(--text-muted)">Sem forma informada: <strong>${fmt(semInfo)}</strong></div>`:'');
-  }
-}
-
-function addMeioPag(){
-  const nome    = document.getElementById('pgNome').value.trim();
-  const tipo    = document.getElementById('pgTipo').value;
-  const titular = document.getElementById('pgTitular').value.trim()||'Família';
-  const cor     = document.getElementById('pgCor').value;
-  if(!nome){ toast('tPg','Informe o nome do meio.',true); return; }
-  meiosPag.push({id:pgNextId++, nome, tipo, titular, cor});
-  document.getElementById('pgNome').value='';
-  document.getElementById('pgTitular').value='';
-  salvarMeiosPag();
-  salvarNoSupabase();
-  toast('tPg','Meio de pagamento adicionado!');
-  renderCarteiras();
-  renderPgChips();
-}
-
-function removeMeioPag(id){
-  if(!confirm('Remover este meio de pagamento?')) return;
-  meiosPag = meiosPag.filter(p=>p.id!==id);
-  if(selPg===id) selPg=null;
-  salvarMeiosPag();
-  salvarNoSupabase();
-  renderCarteiras();
-  renderPgChips();
-}
-
-function salvarMeiosPag(){
-  try { localStorage.setItem('soldy_meios', JSON.stringify(meiosPag)); } catch(e){}
-}
-
-function carregarMeiosPag(){
-  try {
-    const m = localStorage.getItem('soldy_meios');
-    if(m) meiosPag = JSON.parse(m);
-  } catch(e){}
 }
 
 // ── GASTOS FIXOS ─────────────────────────────────────────────
@@ -1887,8 +1641,7 @@ async function carregarDoSupabase(){
       lancs = dataL.map(l=>({
         id: l.id_local || Math.round(Math.random()*10000),
         desc: l.descricao, val: parseFloat(l.valor),
-        cat: l.categoria, tipo: l.tipo, mes: l.mes, ano: l.ano, data: l.data,
-        pagId: l.pag_id||null
+        cat: l.categoria, tipo: l.tipo, mes: l.mes, ano: l.ano, data: l.data
       }));
       nid = Math.max(...lancs.map(l=>typeof l.id==='number'?l.id:0), 0) + 1;
     } else { lancs = []; }
@@ -1896,11 +1649,10 @@ async function carregarDoSupabase(){
     const { data: dataC } = await supa.from('configuracoes').select('*').eq('user_id', uid);
     if(dataC && dataC.length > 0){
       const cfg = dataC[0];
-      if(cfg.receitas)   recs     = cfg.receitas;
-      if(cfg.limites)    lims     = cfg.limites;
-      if(cfg.metas)      metas    = cfg.metas;
-      if(cfg.fixos)      fixos    = cfg.fixos;
-      if(cfg.meiosPag)   meiosPag = cfg.meiosPag;
+      if(cfg.receitas) recs  = cfg.receitas;
+      if(cfg.limites)  lims  = cfg.limites;
+      if(cfg.metas)    metas = cfg.metas;
+      if(cfg.fixos)    fixos = cfg.fixos;
     }
     return true;
   } catch(e){ console.warn('Erro ao carregar do Supabase:', e); return false; }
@@ -1920,8 +1672,7 @@ async function salvarNoSupabase(){
         user_id: uid,
         id_local: typeof l.id==='number' ? l.id : null,
         descricao: l.desc, valor: l.val, categoria: l.cat,
-        tipo: l.tipo, mes: l.mes, ano: l.ano, data: l.data||null,
-        pag_id: l.pagId||null
+        tipo: l.tipo, mes: l.mes, ano: l.ano, data: l.data||null
       }));
       const {error} = await supa.from('lancamentos').insert(rows);
       if(error){ console.error('Erro ao salvar lançamentos:', error); throw error; }
@@ -1929,7 +1680,7 @@ async function salvarNoSupabase(){
     // Salvar configurações
     await supa.from('configuracoes').delete().eq('user_id', uid);
     const {error: errCfg} = await supa.from('configuracoes').insert({
-      user_id: uid, receitas: recs, limites: lims, metas: metas, fixos: fixos, meiosPag: meiosPag
+      user_id: uid, receitas: recs, limites: lims, metas: metas, fixos: fixos
     });
     if(errCfg){ console.error('Erro ao salvar configs:', errCfg); throw errCfg; }
     atualizarStatus('Sincronizado ✓', '#6c4fd6');
