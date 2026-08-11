@@ -1971,8 +1971,31 @@ async function abrirApp(){
     atualizarStatus('Dados locais carregados');
   } else {
     salvar();
-    if(lancs.length === 0){
-      atualizarStatus('⚠ Banco vazio — nenhum lançamento encontrado', '#e34948');
+    if(lancs.length <= 1){
+      // Tenta recuperar do localStorage
+      const backup = localStorage.getItem('soldy_lancs');
+      if(backup){
+        const backupLancs = JSON.parse(backup);
+        if(backupLancs.length > lancs.length){
+          // Mostra botão de recuperação
+          atualizarStatus(`⚠ Banco tem ${lancs.length} lançamento(s). localStorage tem ${backupLancs.length}. Clique para recuperar →`, '#e34948');
+          document.getElementById('saveMsg').style.cursor='pointer';
+          document.getElementById('saveMsg').onclick = async function(){
+            if(!confirm(`Recuperar ${backupLancs.length} lançamentos do backup local e enviar para o banco?`)) return;
+            lancs = backupLancs.map(l=>({...l, mes:parseInt(l.mes), ano:parseInt(l.ano)}));
+            await salvarNoSupabase();
+            salvar();
+            atualizarStatus(`✓ ${lancs.length} lançamentos recuperados!`, '#1baf7a');
+            document.getElementById('saveMsg').onclick=null;
+            document.getElementById('saveMsg').style.cursor='default';
+            renderMes(); renderAno(); renderDash();
+          };
+        } else {
+          atualizarStatus('⚠ Banco vazio e sem backup local', '#e34948');
+        }
+      } else {
+        atualizarStatus('⚠ Banco vazio e sem backup local', '#e34948');
+      }
     } else {
       // Mostra resumo dos dados carregados
       const mesesUnicos = [...new Set(lancs.map(l=>l.ano+'-'+String(l.mes+1).padStart(2,'0')))].sort().join(', ');
